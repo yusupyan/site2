@@ -1,21 +1,148 @@
 <!DOCTYPE html>
-<html>
-<style>
-  body {
-      color: var(--tg-theme-text-color);
-      background: var(--tg-theme-bg-color);
-  }
-</style>
- <head>
-  <meta charset="utf-8">
-  <title>Пример веб-страницы</title>
- </head>
- <body>
-  <h1>магаз сасъ</h1>
-  <!-- Комментарий -->
-  <p>Первый абзац.</p>
-  <p>Второй абзац.</p>
-  <button id="buy">купить</button>
-  <script src="https://telegram.org/js/telegram-web-app.js?58"></script>
- </body>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Polo Ralph Lauren | Классика стиля</title>
+    <style>
+        /* Общие стили */
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Шапка */
+        header {
+            text-align: center;
+            padding: 40px 0;
+            background-color: #1a1a2e;
+            color: white;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2.5em;
+            letter-spacing: 2px;
+        }
+
+        /* Основной контент */
+        .content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin: 40px 0;
+            align-items: center;
+        }
+
+        .brand-info {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .brand-info h2 {
+            color: #1a1a2e;
+            border-bottom: 2px solid #d4af37;
+            padding-bottom: 10px;
+            display: inline-block;
+        }
+
+        .brand-image {
+            flex: 1;
+            min-width: 300px;
+            text-align: center;
+        }
+
+        .brand-image img {
+            max-width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Кнопка "Купить" */
+        .buy-button {
+            display: block;
+            width: 200px;
+            margin: 40px auto;
+            padding: 15px 0;
+            background-color: #d4af37;
+            color: #1a1a2e;
+            text-align: center;
+            font-weight: bold;
+            text-decoration: none;
+            border-radius: 50px;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            font-size: 1.1em;
+        }
+
+        .buy-button:hover {
+            background-color: #c9a227;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Подвал */
+        footer {
+            text-align: center;
+            padding: 20px;
+            background-color: #1a1a2e;
+            color: white;
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>POLO RALPH LAUREN</h1>
+            <p>Классика американского стиля</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="content">
+            <div class="brand-info">
+                <h2>О бренде</h2>
+                <p>Polo Ralph Lauren — это символ элегантности, роскоши и неподвластного времени стиля. Основанный в 1967 году, бренд стал олицетворением американской мечты, сочетая в себе традиции и современность.</p>
+                <p>Фирменные поло с лошадкой и игроком в поло узнаваемы во всём мире. Каждая вещь от Ralph Lauren — это качественные материалы, безупречный крой и внимание к деталям.</p>
+                <p>Выберите свою классику.</p>
+            </div>
+
+            <div class="brand-image">
+                <img src="https://via.placeholder.com/500x300/f9f9f9/1a1a2e?text=Polo+Ralph+Lauren" alt="Polo Ralph Lauren">
+            </div>
+        </div>
+
+        <!-- Кнопка "Купить" (можно привязать к Telegram WebApp) -->
+        <button class="buy-button" id="buyButton">Купить</button>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>© 2024 Polo Ralph Lauren. Все права защищены.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Если используется в Telegram WebApp
+        document.getElementById('buyButton').addEventListener('click', function() {
+            if (window.Telegram && Telegram.WebApp) {
+                Telegram.WebApp.sendData(JSON.stringify({ action: "buy" }));
+            } else {
+                alert("Товар добавлен в корзину!"); // Заглушка для браузера
+            }
+        });
+    </script>
+</body>
 </html>
