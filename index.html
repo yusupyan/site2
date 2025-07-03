@@ -120,7 +120,7 @@
             </div>
 
             <div class="brand-image">
-                <img src="https://via.placeholder.com/500x300/f9f9f9/1a1a2e?text=Polo+Ralph+Lauren" alt="Polo Ralph Lauren">
+                <img src="https://media-assets.grailed.com/prd/listing/45714721/a082f185b58d43d3a92f83f597c2b441" alt="Polo Ralph Lauren">
             </div>
         </div>
 
@@ -134,15 +134,6 @@
         </div>
     </footer>
 
-    <script>
-        // Если используется в Telegram WebApp
-        document.getElementById('buyButton').addEventListener('click', function() {
-            if (window.Telegram && Telegram.WebApp) {
-                Telegram.WebApp.sendData(JSON.stringify({ action: "buy" }));
-            } else {
-                alert("Товар добавлен в корзину!"); // Заглушка для браузера
-            }
-        });
-    </script>
+    <script src="https://telegram.org/js/telegram-web-app.js?58"></script>
 </body>
 </html>
