@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<style>
+  .white-background {
+    background-color: white;
+  }
+</style>
+ <head>
+  <meta charset="utf-8">
+  <title>Пример веб-страницы</title>
+ </head>
+ <body>
+  <h1>магаз сас</h1>
+  <!-- Комментарий -->
+  <p>Первый абзац.</p>
+  <p>Второй абзац.</p>
+  <button id="buy">купить</button>
+ </body>
+</html>
