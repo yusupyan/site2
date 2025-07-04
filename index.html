@@ -203,101 +203,71 @@
 
     <script src="https://telegram.org/js/telegram-web-app.js?58"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const tg = window.Telegram.WebApp;
-            const buyButton = document.getElementById("buyButton");
-            const orderButton = document.getElementById("orderButton");
-            const orderForm = document.getElementById("order-form");
-            const mainContent = document.getElementById("main-content");
-            const footer = document.querySelector('footer');
-            const errorDiv = document.getElementById("error");
+    document.addEventListener('DOMContentLoaded', function() {
+        const tg = window.Telegram.WebApp;
+        const buyButton = document.getElementById("buyButton");
+        const orderButton = document.getElementById("orderButton");
+        const orderForm = document.getElementById("order-form");
+        const mainContent = document.getElementById("main-content");
+        const footer = document.querySelector('footer');
+        const errorDiv = document.getElementById("error");
 
-            // Инициализация Telegram WebApp
-            tg.expand();
-            tg.enableClosingConfirmation();
-            tg.BackButton.hide();
+        // Инициализация WebApp
+        tg.expand();
+        tg.enableClosingConfirmation();
+        tg.MainButton.hide();
 
-            // Обработчик кнопки "Купить"
-            buyButton.addEventListener("click", () => {
-                // Скрываем основной контент
-                mainContent.classList.add('hidden');
-                footer.classList.add('hidden');
+        // Проверяем, что WebApp инициализирован
+        if (!tg.initDataUnsafe) {
+            console.error('Telegram WebApp not initialized properly');
+            errorDiv.textContent = 'Ошибка инициализации приложения. Пожалуйста, откройте через Telegram.';
+            return;
+        }
 
-                // Показываем форму
-                orderForm.style.display = "block";
+        buyButton.addEventListener("click", () => {
+            mainContent.classList.add('hidden');
+            footer.classList.add('hidden');
+            orderForm.style.display = "block";
 
-                // Заполняем имя, если пользователь авторизован
-                if (tg.initDataUnsafe?.user) {
-                    const user = tg.initDataUnsafe.user;
-                    let fullName = user.first_name || '';
-                    if (user.last_name) fullName += ' ' + user.last_name;
-                    document.getElementById("user_name").value = fullName.trim();
-                }
-            });
+            // Заполняем имя пользователя Telegram
+            const user = tg.initDataUnsafe.user || {};
+            const name = [user.first_name, user.last_name].filter(Boolean).join(' ');
+            if (name) document.getElementById("user_name").value = name;
+        });
 
-            // Обработчик кнопки "Отправить заказ"
-            orderButton.addEventListener("click", async () => {
-                // Получаем значения полей
-                const name = document.getElementById("user_name").value.trim();
-                const email = document.getElementById("user_email").value.trim();
-                const phone = document.getElementById("user_phone").value.trim();
+        orderButton.addEventListener("click", () => {
+            // Получаем данные формы
+            const formData = {
+                name: document.getElementById("user_name").value.trim(),
+                email: document.getElementById("user_email").value.trim(),
+                phone: document.getElementById("user_phone").value.trim()
+            };
 
-                // Валидация полей
-                errorDiv.textContent = '';
+            // Валидация
+            if (!formData.name || formData.name.length < 2) {
+                errorDiv.textContent = 'Имя должно содержать минимум 2 символа';
+                return;
+            }
+            if (!formData.email.includes('@') || !formData.email.includes('.')) {
+                errorDiv.textContent = 'Введите корректный email';
+                return;
+            }
+            if (!formData.phone || formData.phone.length < 5) {
+                errorDiv.textContent = 'Номер телефона должен содержать минимум 5 символов';
+                return;
+            }
 
-                if (!name || name.length < 2) {
-                    errorDiv.textContent = 'Имя должно содержать минимум 2 символа';
-                    return;
-                }
+            console.log('Отправляем данные:', formData); // Логируем для отладки
 
-                if (!email.includes('@') || !email.includes('.')) {
-                    errorDiv.textContent = 'Введите корректный email';
-                    return;
-                }
+            // Отправляем данные в Telegram
+            tg.sendData(JSON.stringify(formData));
 
-                if (!phone || phone.length < 5) {
-                    errorDiv.textContent = 'Номер телефона должен содержать минимум 5 символов';
-                    return;
-                }
-
-                // Формируем данные для отправки
-                const orderData = {
-                    name: name,
-                    email: email,
-                    phone: phone
-                };
-
-                console.log('Отправляемые данные:', orderData); // Для отладки
-
-                try {
-                    // Отправляем данные в Telegram
-                    tg.sendData(JSON.stringify(orderData));
-
-                    // Показываем уведомление пользователю
-                    tg.showAlert('Спасибо за заказ! Мы свяжемся с вами в ближайшее время.');
-
-                    // Закрываем WebApp через 1 секунду
-                    setTimeout(() => {
-                        tg.close();
-                    }, 1000);
-
-                } catch (error) {
-                    console.error('Ошибка при отправке данных:', error);
-                    errorDiv.textContent = 'Произошла ошибка при отправке. Пожалуйста, попробуйте ещё раз.';
-                }
-            });
-
-            // Обработчик кнопки "Назад" в Telegram
-            tg.onEvent('backButtonClicked', function() {
-                if (orderForm.style.display === "block") {
-                    // Если открыта форма - возвращаемся к основному контенту
-                    orderForm.style.display = "none";
-                    mainContent.classList.remove('hidden');
-                    footer.classList.remove('hidden');
-                    tg.BackButton.hide();
-                }
+            // Показываем подтверждение
+            tg.showAlert('Спасибо за заказ! Мы скоро с вами свяжемся.', () => {
+                tg.close();
             });
         });
+    });
     </script>
 </body>
 </html>
