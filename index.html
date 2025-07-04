@@ -131,6 +131,12 @@
 
         <!-- Кнопка "Купить" (можно привязать к Telegram WebApp) -->
         <button class="buy-button" id="buyButton">Купить</button>
+        <form>
+            <input type="text" placeholder="Имя" id="user_name">
+            <input type="text" placeholder="Email" id="user_email">
+            <input type="text" placeholder="Телефон" id="user_phone">
+            <button id="order">Оформить</button>
+        </form>
     </div>
 
     <footer>
@@ -138,12 +144,6 @@
             <p>© 2024 Polo Ralph Lauren. Все права защищены.</p>
         </div>
     </footer>
-    <form>
-        <input type="text" placeholder="Имя" id="user_name">
-        <input type="text" placeholder="Email" id="user_email">
-        <input type="text" placeholder="Телефон" id="user_phone">
-        <button id="order">Оформить</button>
-    </form>
     <script src="https://telegram.org/js/telegram-web-app.js?58"></script>
     <script>
         let tg = window.Telegram.WebApp;
