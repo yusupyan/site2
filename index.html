@@ -86,6 +86,11 @@
             font-size: 1.1em;
         }
 
+        #form {
+            display: none;
+            text-align: center;
+        }
+
         .buy-button:hover {
             background-color: #c9a227;
             transform: translateY(-2px);
@@ -133,7 +138,27 @@
             <p>© 2024 Polo Ralph Lauren. Все права защищены.</p>
         </div>
     </footer>
-
+    <form>
+        <input type="text" placeholder="Имя" id="user_name">
+        <input type="text" placeholder="Email" id="user_email">
+        <input type="text" placeholder="Телефон" id="user_phone">
+        <button id="order">Оформить</button>
+    </form>
     <script src="https://telegram.org/js/telegram-web-app.js?58"></script>
+    <script>
+        let tg = window.Telegram.WebApp;
+        let buy = document.getElementById("buyButton")
+        let order = document.getElementById("order")
+
+        buyButton.addEventListener("click", () => {
+            document.getElementById("main").style.display = "none";
+            document.getElementById("form").style.display = "block";
+            document.getElementById("user_name").value = tg.initDataUnsafe.user.first_name + " " + tg.initDataUnsafe.user.last_name;
+        });
+
+        order.addEventListener("click", () => {
+            tg.close();
+        });
+    </script>
 </body>
 </html>
