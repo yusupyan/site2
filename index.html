@@ -86,9 +86,36 @@
             font-size: 1.1em;
         }
 
-        #form {
+        #order-form {
             display: none;
-            text-align: center;
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        #order-form input {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        #order-form button {
+            width: 100%;
+            padding: 12px;
+            background-color: #d4af37;
+            color: #1a1a2e;
+            border: none;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 16px;
         }
 
         .buy-button:hover {
@@ -129,13 +156,15 @@
             </div>
         </div>
 
-        <!-- Кнопка "Купить" (можно привязать к Telegram WebApp) -->
+        <!-- Кнопка "Купить" -->
         <button class="buy-button" id="buyButton">Купить</button>
-        <form>
-            <input type="text" placeholder="Имя" id="user_name">
-            <input type="text" placeholder="Email" id="user_email">
-            <input type="text" placeholder="Телефон" id="user_phone">
-            <button id="order">Оформить</button>
+
+        <!-- Форма заказа -->
+        <form id="order-form">
+            <input type="text" placeholder="Имя" id="user_name" required>
+            <input type="email" placeholder="Email" id="user_email" required>
+            <input type="tel" placeholder="Телефон" id="user_phone" required>
+            <button type="button" id="order">Оформить заказ</button>
         </form>
     </div>
 
@@ -144,19 +173,33 @@
             <p>© 2024 Polo Ralph Lauren. Все права защищены.</p>
         </div>
     </footer>
+
     <script src="https://telegram.org/js/telegram-web-app.js?58"></script>
     <script>
         let tg = window.Telegram.WebApp;
-        let buy = document.getElementById("buyButton")
-        let order = document.getElementById("order")
+        let buyButton = document.getElementById("buyButton");
+        let orderButton = document.getElementById("order");
+        let orderForm = document.getElementById("order-form");
 
         buyButton.addEventListener("click", () => {
-            document.getElementById("main").style.display = "none";
-            document.getElementById("form").style.display = "block";
-            document.getElementById("user_name").value = tg.initDataUnsafe.user.first_name + " " + tg.initDataUnsafe.user.last_name;
+            // Показываем форму
+            orderForm.style.display = "block";
+            // Скрываем кнопку "Купить"
+            buyButton.style.display = "none";
+
+            // Если пользователь авторизован в Telegram, заполняем имя
+            if (tg.initDataUnsafe?.user) {
+                const user = tg.initDataUnsafe.user;
+                let fullName = "";
+                if (user.first_name) fullName += user.first_name;
+                if (user.last_name) fullName += " " + user.last_name;
+                document.getElementById("user_name").value = fullName.trim();
+            }
         });
 
-        order.addEventListener("click", () => {
+        orderButton.addEventListener("click", () => {
+            // Здесь можно добавить обработку формы перед закрытием
+            alert("Заказ оформлен! Мы свяжемся с вами в ближайшее время.");
             tg.close();
         });
     </script>
