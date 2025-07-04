@@ -202,26 +202,100 @@
     </footer>
 
     <script src="https://telegram.org/js/telegram-web-app.js?58"></script>
-    <script>
+<script>
     document.addEventListener('DOMContentLoaded', function() {
         const tg = window.Telegram.WebApp;
-        // ... остальной код инициализации ...
+        const buyButton = document.getElementById("buyButton");
+        const orderButton = document.getElementById("orderButton");
+        const orderForm = document.getElementById("order-form");
+        const mainContent = document.getElementById("main-content");
+        const footer = document.querySelector('footer');
+        const errorDiv = document.getElementById("error");
 
-        orderButton.addEventListener("click", () => {
-            // ... валидация полей ...
+        // Инициализация Telegram WebApp
+        tg.expand();
+        tg.enableClosingConfirmation();
+        tg.BackButton.hide();
 
-            // Формируем данные в правильном формате
+        // Обработчик кнопки "Купить"
+        buyButton.addEventListener("click", () => {
+            // Скрываем основной контент
+            mainContent.classList.add('hidden');
+            footer.classList.add('hidden');
+
+            // Показываем форму
+            orderForm.style.display = "block";
+
+            // Заполняем имя, если пользователь авторизован
+            if (tg.initDataUnsafe?.user) {
+                const user = tg.initDataUnsafe.user;
+                let fullName = user.first_name || '';
+                if (user.last_name) fullName += ' ' + user.last_name;
+                document.getElementById("user_name").value = fullName.trim();
+            }
+        });
+
+        // Обработчик кнопки "Отправить заказ"
+        orderButton.addEventListener("click", async () => {
+            // Получаем значения полей
+            const name = document.getElementById("user_name").value.trim();
+            const email = document.getElementById("user_email").value.trim();
+            const phone = document.getElementById("user_phone").value.trim();
+
+            // Валидация полей
+            errorDiv.textContent = '';
+
+            if (!name || name.length < 2) {
+                errorDiv.textContent = 'Имя должно содержать минимум 2 символа';
+                return;
+            }
+
+            if (!email.includes('@') || !email.includes('.')) {
+                errorDiv.textContent = 'Введите корректный email';
+                return;
+            }
+
+            if (!phone || phone.length < 5) {
+                errorDiv.textContent = 'Номер телефона должен содержать минимум 5 символов';
+                return;
+            }
+
+            // Формируем данные для отправки
             const orderData = {
                 name: name,
                 email: email,
                 phone: phone
             };
 
-            // Отправляем данные напрямую как JSON строку
-            tg.sendData(JSON.stringify(orderData));
+            console.log('Отправляемые данные:', orderData); // Для отладки
 
-            // Закрываем WebApp
-            tg.close();
+            try {
+                // Отправляем данные в Telegram
+                tg.sendData(JSON.stringify(orderData));
+
+                // Показываем уведомление пользователю
+                tg.showAlert('Спасибо за заказ! Мы свяжемся с вами в ближайшее время.');
+
+                // Закрываем WebApp через 1 секунду
+                setTimeout(() => {
+                    tg.close();
+                }, 1000);
+
+            } catch (error) {
+                console.error('Ошибка при отправке данных:', error);
+                errorDiv.textContent = 'Произошла ошибка при отправке. Пожалуйста, попробуйте ещё раз.';
+            }
+        });
+
+        // Обработчик кнопки "Назад" в Telegram
+        tg.onEvent('backButtonClicked', function() {
+            if (orderForm.style.display === "block") {
+                // Если открыта форма - возвращаемся к основному контенту
+                orderForm.style.display = "none";
+                mainContent.classList.remove('hidden');
+                footer.classList.remove('hidden');
+                tg.BackButton.hide();
+            }
         });
     });
 </script>
