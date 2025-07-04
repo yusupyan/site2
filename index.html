@@ -203,73 +203,27 @@
 
     <script src="https://telegram.org/js/telegram-web-app.js?58"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const tg = window.Telegram.WebApp;
-            const buyButton = document.getElementById("buyButton");
-            const orderButton = document.getElementById("orderButton");
-            const orderForm = document.getElementById("order-form");
-            const mainContent = document.getElementById("main-content");
-            const footer = document.querySelector('footer');
-            const errorDiv = document.getElementById("error");
+    document.addEventListener('DOMContentLoaded', function() {
+        const tg = window.Telegram.WebApp;
+        // ... остальной код инициализации ...
 
-            // Инициализация WebApp Telegram
-            tg.expand();
-            tg.enableClosingConfirmation();
+        orderButton.addEventListener("click", () => {
+            // ... валидация полей ...
 
-            buyButton.addEventListener("click", () => {
-                mainContent.classList.add('hidden');
-                footer.classList.add('hidden');
-                orderForm.style.display = "block";
+            // Формируем данные в правильном формате
+            const orderData = {
+                name: name,
+                email: email,
+                phone: phone
+            };
 
-                if (tg.initDataUnsafe?.user) {
-                    const user = tg.initDataUnsafe.user;
-                    let fullName = "";
-                    if (user.first_name) fullName += user.first_name;
-                    if (user.last_name) fullName += " " + user.last_name;
-                    document.getElementById("user_name").value = fullName.trim();
-                }
-            });
+            // Отправляем данные напрямую как JSON строку
+            tg.sendData(JSON.stringify(orderData));
 
-            orderButton.addEventListener("click", () => {
-                const name = document.getElementById("user_name").value.trim();
-                const email = document.getElementById("user_email").value.trim();
-                const phone = document.getElementById("user_phone").value.trim();
-
-                // Валидация
-                errorDiv.innerText = '';
-
-                if (name.length < 2) {
-                    errorDiv.innerText = 'Имя должно содержать минимум 2 символа';
-                    return;
-                }
-
-                if (!email.includes('@') || !email.includes('.')) {
-                    errorDiv.innerText = 'Введите корректный email';
-                    return;
-                }
-
-                if (phone.length < 5) {
-                    errorDiv.innerText = 'Номер телефона должен содержать минимум 5 символов';
-                    return;
-                }
-
-                // Формируем данные в ТОЧНОМ формате, который ожидает бот
-                const webAppData = {
-                    name: name,
-                    email: email,
-                    phone: phone
-                };
-
-                // Отправляем данные в формате, который обрабатывает ваш Python-код
-                tg.sendData(JSON.stringify({
-                    // Главное - сохраняем структуру данных, которую парсит бот
-                    data: JSON.stringify(webAppData)
-                }));
-
-                // Закрываем WebApp после отправки
-                tg.close();
-            });
+            // Закрываем WebApp
+            tg.close();
         });
-    </script>
+    });
+</script>
 </body>
 </html>
