@@ -217,14 +217,10 @@
             tg.enableClosingConfirmation();
 
             buyButton.addEventListener("click", () => {
-                // Скрываем основной контент и футер
                 mainContent.classList.add('hidden');
                 footer.classList.add('hidden');
-
-                // Показываем форму
                 orderForm.style.display = "block";
 
-                // Если пользователь авторизован в Telegram, заполняем имя
                 if (tg.initDataUnsafe?.user) {
                     const user = tg.initDataUnsafe.user;
                     let fullName = "";
@@ -235,12 +231,11 @@
             });
 
             orderButton.addEventListener("click", () => {
-                // Получаем значения полей
                 const name = document.getElementById("user_name").value.trim();
                 const email = document.getElementById("user_email").value.trim();
                 const phone = document.getElementById("user_phone").value.trim();
 
-                // Валидация полей
+                // Валидация
                 errorDiv.innerText = '';
 
                 if (name.length < 2) {
@@ -258,17 +253,20 @@
                     return;
                 }
 
-                // Формируем данные для отправки
-                const data = {
+                // Формируем данные в ТОЧНОМ формате, который ожидает бот
+                const webAppData = {
                     name: name,
                     email: email,
                     phone: phone
                 };
 
-                // Отправляем данные в Telegram бот
-                tg.sendData(JSON.stringify(data));
+                // Отправляем данные в формате, который обрабатывает ваш Python-код
+                tg.sendData(JSON.stringify({
+                    // Главное - сохраняем структуру данных, которую парсит бот
+                    data: JSON.stringify(webAppData)
+                }));
 
-                // Закрываем WebApp
+                // Закрываем WebApp после отправки
                 tg.close();
             });
         });
