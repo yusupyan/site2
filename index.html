@@ -126,6 +126,12 @@
             transition: background-color 0.3s;
         }
 
+        #error {
+            color: red;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
         #order-form button:hover {
             background-color: #c9a227;
         }
@@ -184,6 +190,7 @@
             <input type="text" placeholder="Ваше имя" id="user_name" required>
             <input type="email" placeholder="Email" id="user_email" required>
             <input type="tel" placeholder="Телефон" id="user_phone" required>
+            <div id="error"></div>
             <button type="button" id="orderButton">Отправить заказ</button>
         </form>
     </div>
@@ -203,6 +210,11 @@
             const orderForm = document.getElementById("order-form");
             const mainContent = document.getElementById("main-content");
             const footer = document.querySelector('footer');
+            const errorDiv = document.getElementById("error");
+
+            // Инициализация WebApp Telegram
+            tg.expand();
+            tg.enableClosingConfirmation();
 
             buyButton.addEventListener("click", () => {
                 // Скрываем основной контент и футер
@@ -223,22 +235,41 @@
             });
 
             orderButton.addEventListener("click", () => {
-                // Проверяем заполнение формы
-                const name = document.getElementById("user_name").value;
-                const email = document.getElementById("user_email").value;
-                const phone = document.getElementById("user_phone").value;
+                // Получаем значения полей
+                const name = document.getElementById("user_name").value.trim();
+                const email = document.getElementById("user_email").value.trim();
+                const phone = document.getElementById("user_phone").value.trim();
 
-                if (name && email && phone) {
-                    // Здесь можно добавить отправку данных на сервер
-                    alert("Спасибо за заказ, " + name + "! Мы свяжемся с вами в ближайшее время.");
+                // Валидация полей
+                errorDiv.innerText = '';
 
-                    // Закрываем WebApp (если это Telegram)
-                    if (tg && tg.close) {
-                        tg.close();
-                    }
-                } else {
-                    alert("Пожалуйста, заполните все поля формы.");
+                if (name.length < 2) {
+                    errorDiv.innerText = 'Имя должно содержать минимум 2 символа';
+                    return;
                 }
+
+                if (!email.includes('@') || !email.includes('.')) {
+                    errorDiv.innerText = 'Введите корректный email';
+                    return;
+                }
+
+                if (phone.length < 5) {
+                    errorDiv.innerText = 'Номер телефона должен содержать минимум 5 символов';
+                    return;
+                }
+
+                // Формируем данные для отправки
+                const data = {
+                    name: name,
+                    email: email,
+                    phone: phone
+                };
+
+                // Отправляем данные в Telegram бот
+                tg.sendData(JSON.stringify(data));
+
+                // Закрываем WebApp
+                tg.close();
             });
         });
     </script>
