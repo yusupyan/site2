@@ -89,21 +89,28 @@
         #order-form {
             display: none;
             max-width: 400px;
-            margin: 0 auto;
-            padding: 20px;
+            margin: 40px auto;
+            padding: 30px;
             background-color: white;
             border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        #order-form h2 {
+            text-align: center;
+            color: #1a1a2e;
+            margin-bottom: 20px;
         }
 
         #order-form input {
             display: block;
             width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
+            padding: 12px;
+            margin-bottom: 20px;
             border: 1px solid #ddd;
             border-radius: 4px;
             font-size: 16px;
+            box-sizing: border-box;
         }
 
         #order-form button {
@@ -116,6 +123,11 @@
             font-weight: bold;
             cursor: pointer;
             font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        #order-form button:hover {
+            background-color: #c9a227;
         }
 
         .buy-button:hover {
@@ -132,6 +144,11 @@
             color: white;
             margin-top: 40px;
         }
+
+        /* Класс для скрытия элементов */
+        .hidden {
+            display: none !important;
+        }
     </style>
 </head>
 <body>
@@ -142,7 +159,7 @@
         </div>
     </header>
 
-    <div class="container">
+    <div class="container" id="main-content">
         <div class="content">
             <div class="brand-info">
                 <h2>О бренде</h2>
@@ -158,13 +175,16 @@
 
         <!-- Кнопка "Купить" -->
         <button class="buy-button" id="buyButton">Купить</button>
+    </div>
 
-        <!-- Форма заказа -->
+    <!-- Форма заказа (изначально скрыта) -->
+    <div class="container">
         <form id="order-form">
-            <input type="text" placeholder="Имя" id="user_name" required>
+            <h2>Оформление заказа</h2>
+            <input type="text" placeholder="Ваше имя" id="user_name" required>
             <input type="email" placeholder="Email" id="user_email" required>
             <input type="tel" placeholder="Телефон" id="user_phone" required>
-            <button type="button" id="order">Оформить заказ</button>
+            <button type="button" id="orderButton">Отправить заказ</button>
         </form>
     </div>
 
@@ -176,31 +196,50 @@
 
     <script src="https://telegram.org/js/telegram-web-app.js?58"></script>
     <script>
-        let tg = window.Telegram.WebApp;
-        let buyButton = document.getElementById("buyButton");
-        let orderButton = document.getElementById("order");
-        let orderForm = document.getElementById("order-form");
+        document.addEventListener('DOMContentLoaded', function() {
+            const tg = window.Telegram.WebApp;
+            const buyButton = document.getElementById("buyButton");
+            const orderButton = document.getElementById("orderButton");
+            const orderForm = document.getElementById("order-form");
+            const mainContent = document.getElementById("main-content");
+            const footer = document.querySelector('footer');
 
-        buyButton.addEventListener("click", () => {
-            // Показываем форму
-            orderForm.style.display = "block";
-            // Скрываем кнопку "Купить"
-            buyButton.style.display = "none";
+            buyButton.addEventListener("click", () => {
+                // Скрываем основной контент и футер
+                mainContent.classList.add('hidden');
+                footer.classList.add('hidden');
 
-            // Если пользователь авторизован в Telegram, заполняем имя
-            if (tg.initDataUnsafe?.user) {
-                const user = tg.initDataUnsafe.user;
-                let fullName = "";
-                if (user.first_name) fullName += user.first_name;
-                if (user.last_name) fullName += " " + user.last_name;
-                document.getElementById("user_name").value = fullName.trim();
-            }
-        });
+                // Показываем форму
+                orderForm.style.display = "block";
 
-        orderButton.addEventListener("click", () => {
-            // Здесь можно добавить обработку формы перед закрытием
-            alert("Заказ оформлен! Мы свяжемся с вами в ближайшее время.");
-            tg.close();
+                // Если пользователь авторизован в Telegram, заполняем имя
+                if (tg.initDataUnsafe?.user) {
+                    const user = tg.initDataUnsafe.user;
+                    let fullName = "";
+                    if (user.first_name) fullName += user.first_name;
+                    if (user.last_name) fullName += " " + user.last_name;
+                    document.getElementById("user_name").value = fullName.trim();
+                }
+            });
+
+            orderButton.addEventListener("click", () => {
+                // Проверяем заполнение формы
+                const name = document.getElementById("user_name").value;
+                const email = document.getElementById("user_email").value;
+                const phone = document.getElementById("user_phone").value;
+
+                if (name && email && phone) {
+                    // Здесь можно добавить отправку данных на сервер
+                    alert("Спасибо за заказ, " + name + "! Мы свяжемся с вами в ближайшее время.");
+
+                    // Закрываем WebApp (если это Telegram)
+                    if (tg && tg.close) {
+                        tg.close();
+                    }
+                } else {
+                    alert("Пожалуйста, заполните все поля формы.");
+                }
+            });
         });
     </script>
 </body>
